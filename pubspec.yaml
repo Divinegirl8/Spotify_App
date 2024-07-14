@@ -41,7 +41,10 @@ dependencies:
   spotify: ^0.13.7
   youtube_explode_dart: ^2.2.1
   audioplayers: ^6.0.0
-  
+  palette_generator: ^0.3.3+4
+  scrollable_positioned_list: ^0.3.8
+  http:
+  intl:  
 
 dev_dependencies:
   flutter_test:

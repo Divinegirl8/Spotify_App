@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+
 class ArtWorkImage extends StatelessWidget {
-  final String image;
+  final String? image;
 
   const ArtWorkImage({super.key, required this.image});
 
@@ -9,13 +10,13 @@ class ArtWorkImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.maxFinite,
-      height: 285,
+      height: MediaQuery.of(context).size.height * .4,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
-        image: DecorationImage(
-          image: AssetImage(image),
-          fit: BoxFit.cover,  
-        ),
+        image: image != null?DecorationImage(
+          fit: BoxFit.cover,
+          image: NetworkImage(image!),
+        ):null
       ),
     );
   }

@@ -1,94 +1,113 @@
-class HitsModel{
+import 'dart:convert';
+import 'package:spotify_clone/screens/music_player.dart';
+import 'package:http/http.dart' as http;
+import 'package:spotify_clone/view/customid.dart';
+
+class HitsModel {
   String urlPath;
   String name;
+  String musicTitle;
+  
+  MusicPlayer? musicPlayer;
 
   HitsModel({
     required this.urlPath,
-    required this.name
+    required this.name,
+    required this.musicPlayer,
+    required this.musicTitle,
   });
 
-  static List<HitsModel> getHitModel(){
+  static Future<String> getAccessToken(String clientId, String clientSecret) async {
+    final response = await http.post(
+      Uri.parse('https://accounts.spotify.com/api/token'),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ${base64Encode(utf8.encode('$clientId:$clientSecret'))}',
+      },
+      body: {
+        'grant_type': 'client_credentials',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      return json['access_token'];
+    } else {
+      throw Exception('Failed to get access token');
+    }
+  }
+
+  static Future<Map<String, String>> getArtistDetails(String trackId, String accessToken) async {
+    final response = await http.get(
+      Uri.parse('https://api.spotify.com/v1/tracks/$trackId'),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      final artist = json['artists'][0];
+      final artistName = artist['name'];
+       final songName = json['name']; 
+      final artistImage = (await getArtistImage(artist['id'], accessToken)) ?? '';
+      return {
+        'name': artistName,
+        'image': artistImage,
+        'musicname': songName,
+        
+      };
+    } else {
+      throw Exception('Failed to get track details');
+    }
+  }
+
+  static Future<String?> getArtistImage(String artistId, String accessToken) async {
+    final response = await http.get(
+      Uri.parse('https://api.spotify.com/v1/artists/$artistId'),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      return json['images'].isNotEmpty ? json['images'][0]['url'] : null;
+    } else {
+      throw Exception('Failed to get artist details');
+    }
+  }
+
+  static Future<List<HitsModel>> getHitModel() async {
+    const clientId = CustomId.clientId;
+    const clientSecret = CustomId.clientSecret;
+    const trackIds = [
+      '5ZtK8XAVnoaGdBXZWCEVCY',
+      '2AaZJAh9FifPCQdba87Hzr',
+      '3aGroTtXwkWJ7wOwKEI8Px',
+      '1mk8ZC9OeTZMr8Wy31LqRj'
+      
+    ]; 
+
+    final accessToken = await getAccessToken(clientId, clientSecret);
+
     List<HitsModel> models = [];
 
-    models.add(
-      HitsModel(
-        urlPath: "images/img1.jpg",
-        name: "song 1"
-      )
-    );
-
-
-    models.add(
-      HitsModel(
-        urlPath: "images/img2.jpg",
-        name: "song 2"
-      )
-    );
-
-
-    models.add(
-      HitsModel(
-        urlPath: "images/img3.jpg",
-        name: "song 3"
-      )
-    );
-
-
-    models.add(
-      HitsModel(
-        urlPath: "images/img4.jpg",
-        name: "song 4"
-      )
-    );
-
-
-    models.add(
-      HitsModel(
-        urlPath: "images/img5.jpg",
-        name: "song 5"
-      )
-    );
-
-
-    models.add(
-      HitsModel(
-        urlPath: "images/img6.jpg",
-        name: "song 6"
-      )
-    );
-
-        models.add(
-      HitsModel(
-        urlPath: "images/img7.jpg",
-        name: "song 7"
-      )
-    );
-
-
-        models.add(
-      HitsModel(
-        urlPath: "images/img12.jpg",
-        name: "song 12"
-      )
-    );
-
-       models.add(
-      HitsModel(
-        urlPath: "images/img13.jpg",
-        name: "song 13"
-      )
-    );
-
-
-        models.add(
-      HitsModel(
-        urlPath: "images/img14.jpg",
-        name: "song 14"
-      )
-    );
+    for (var trackId in trackIds) {
+      final artistDetails = await getArtistDetails(trackId, accessToken);
+      final artistName = artistDetails['name']!;
+      final artistImage = artistDetails['image']!;
+      final songName = artistDetails['musicname']!;
+      models.add(
+        HitsModel(
+          urlPath: artistImage,
+          name: artistName,
+          musicPlayer: const MusicPlayer(),
+          musicTitle: songName
+        ),
+      );
+    }
 
     return models;
   }
-
-
 }
