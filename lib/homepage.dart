@@ -23,13 +23,8 @@ class _HomepageState extends State<Homepage> {
   }
 
   Future<void> _initializeData() async {
-    // Fetch categories synchronously
     categories = CategoryModel.getCategory();
-
-    // Fetch hits asynchronously
     hits = await HitsModel.getHitModel();
-
-    // Update the UI after fetching data
     setState(() {});
   }
 
@@ -77,31 +72,30 @@ class _HomepageState extends State<Homepage> {
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MusicPlayer(),
-                      ),
-                    );
-                  },
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MusicPlayer(initialTrackIndex: index),
+                    ),
+                  );
+                },
                 child: SizedBox(
-                  width: 150, 
+                  width: 150,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                     SizedBox(
-                              height: 100,
-                              width: 100,
-                              child: Image.network(
-                                hits[index].urlPath,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Center(
-                                    child: Icon(Icons.error),
-                                  );
-                                },
-                              ),
-                            ),
-
+                      SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: Image.network(
+                          hits[index].urlPath,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Center(
+                              child: Icon(Icons.error),
+                            );
+                          },
+                        ),
+                      ),
                       Text(
                         hits[index].name,
                         style: const TextStyle(
@@ -109,14 +103,13 @@ class _HomepageState extends State<Homepage> {
                           fontSize: 12,
                         ),
                       ),
-                    
                       Text(
-                      hits[index].musicTitle,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
+                        hits[index].musicTitle,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
                     ],
                   ),
                 ),
@@ -127,6 +120,7 @@ class _HomepageState extends State<Homepage> {
       ],
     );
   }
+
 
   Widget charts(List<CategoryModel> categories) {
     return Column(

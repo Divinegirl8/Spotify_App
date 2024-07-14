@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:spotify_clone/screens/music_player.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:spotify_clone/view/customid.dart';
 
@@ -8,12 +8,12 @@ class HitsModel {
   String name;
   String musicTitle;
   
-  MusicPlayer? musicPlayer;
+  // MusicPlayer? musicPlayer;
 
   HitsModel({
     required this.urlPath,
     required this.name,
-    required this.musicPlayer,
+    // required this.musicPlayer,
     required this.musicTitle,
   });
 
@@ -91,6 +91,7 @@ class HitsModel {
       '5HM5trJxTouv3eUVcbW8sh',
       '6cyXHTix4NQ069gKJEYv41',
       '2JfRd9fkzyZge8BZzs7aUI',
+      '4jyZRIiSAEkziHwhZsfmXc'
     ]; 
 
     final accessToken = await getAccessToken(clientId, clientSecret);
@@ -106,7 +107,6 @@ class HitsModel {
         HitsModel(
           urlPath: artistImage,
           name: artistName,
-          musicPlayer: const MusicPlayer(),
           musicTitle: songName
         ),
       );
