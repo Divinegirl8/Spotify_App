@@ -6,7 +6,7 @@ import 'models/category_model.dart';
 import 'models/hits_model.dart';
 
 class Homepage extends StatefulWidget {
-  Homepage({Key? key}) : super(key: key);
+  const Homepage({super.key});
 
   @override
   _HomepageState createState() => _HomepageState();
