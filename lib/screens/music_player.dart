@@ -23,10 +23,20 @@ class _MusicPlayerState extends flut.State<MusicPlayer> {
 
   static const trackIds = [
     '5ZtK8XAVnoaGdBXZWCEVCY',
-    '2AaZJAh9FifPCQdba87Hzr',
-    '3aGroTtXwkWJ7wOwKEI8Px',
-    '1mk8ZC9OeTZMr8Wy31LqRj',
+      '2AaZJAh9FifPCQdba87Hzr',
+      '3aGroTtXwkWJ7wOwKEI8Px',
+      '1mk8ZC9OeTZMr8Wy31LqRj',
+      '5IgjP7X4th6nMNDh4akUHb',
+      '6O2hrfRRPBJ59PwKhSKFHz',
+      '5HM5trJxTouv3eUVcbW8sh',
+      '6cyXHTix4NQ069gKJEYv41',
+      '2JfRd9fkzyZge8BZzs7aUI',
+    
   ];
+
+
+
+
 
   List<Music> musicList = [];
   int currentTrackIndex = 0;
@@ -54,7 +64,7 @@ class _MusicPlayerState extends flut.State<MusicPlayer> {
     final credentials = SpotifyApiCredentials(CustomId.clientId, CustomId.clientSecret);
     final spotify = SpotifyApi(credentials);
 
-    final track = await spotify.tracks.get(music.trackId);
+    final track = await spotify.tracks.get(musicList[currentTrackIndex].trackId);
     String? tempSongName = track.name;
     if (tempSongName != null) {
       music.songName = tempSongName;
@@ -85,6 +95,16 @@ class _MusicPlayerState extends flut.State<MusicPlayer> {
       initializeMusic(musicList[currentTrackIndex]);
     } else {
       currentTrackIndex = 0;
+      initializeMusic(musicList[currentTrackIndex]);
+    }
+  }
+
+  void playPreviousTrack() {
+    if (currentTrackIndex > 0) {
+      currentTrackIndex--;
+      initializeMusic(musicList[currentTrackIndex]);
+    } else {
+      currentTrackIndex = musicList.length - 1;
       initializeMusic(musicList[currentTrackIndex]);
     }
   }
@@ -216,7 +236,7 @@ class _MusicPlayerState extends flut.State<MusicPlayer> {
                           },
                           icon: const flut.Icon(flut.Icons.lyrics_outlined, color: flut.Colors.white)),
                         flut.IconButton(
-                          onPressed: () {},
+                          onPressed: playPreviousTrack,
                           icon: const flut.Icon(flut.Icons.skip_previous, color: flut.Colors.white, size: 36)),
                         flut.IconButton(
                           onPressed: () async {
